@@ -325,3 +325,28 @@ class IndependentSampler(Sampler):
         else:
             raise ValueError
         return sample
+
+    
+    
+# Automasking for binary samplers
+def mask(sample, lengths):
+    maxlen = sample.shape[1]
+    diag_mask = torch.eye(maxlen, device=sample.device, dtype=bool).unsqueeze(0)
+    sample = sample.masked_fill(diag_mask, 0.0)
+    arcmask = arcmask_from_lengths(sample, lengths)
+    sample = sample.masked_fill(arcmask, 0.0)
+    return sample
+
+
+class BinaryIndependentSampler(Sampler):
+
+    def __init__(self, mode, tau):
+        super(BinaryIndependentSampler, self).__init__(mode, None, tau)
+
+    def forward_train(self, A, lengths=None):
+        sample = mask(self.sample(A, lengths, self.mode), lengths)
+        return sample
+
+    def forward_eval(self, A, lengths=None):
+        sample = mask(self.sample(A, lengths, 'hard'), lengths)
+        return sample
