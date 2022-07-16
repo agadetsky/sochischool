@@ -1,4 +1,5 @@
 import listops.model_modules.func_sampling as _sampling
+from listops.model_modules.func_customparse import arcmask_from_lengths
 import torch
 import torch.nn as nn
 
@@ -350,3 +351,6 @@ class BinaryIndependentSampler(Sampler):
     def forward_eval(self, A, lengths=None):
         sample = mask(self.sample(A, lengths, 'hard'), lengths)
         return sample
+    
+    def sample(self, A, lengths, mode):
+        raise NotImplementedError
