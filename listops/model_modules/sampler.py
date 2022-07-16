@@ -341,8 +341,8 @@ def mask(sample, lengths):
 
 class BinaryIndependentSampler(Sampler):
 
-    def __init__(self, mode, tau):
-        super(BinaryIndependentSampler, self).__init__(mode, None, tau)
+    def __init__(self, mode, noise, tau):
+        super(BinaryIndependentSampler, self).__init__(mode, noise, tau)
 
     def forward_train(self, A, lengths=None):
         sample = mask(self.sample(A, lengths, self.mode), lengths)
