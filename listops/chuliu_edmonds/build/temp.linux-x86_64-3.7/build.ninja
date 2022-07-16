@@ -1,0 +1,20 @@
+ninja_required_version = 1.3
+cxx = c++
+
+cflags = -pthread -B /home/drakitin/miniconda3/envs/robust_fill/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/home/drakitin/miniconda3/envs/robust_fill/lib/python3.7/site-packages/torch/include -I/home/drakitin/miniconda3/envs/robust_fill/lib/python3.7/site-packages/torch/include/torch/csrc/api/include -I/home/drakitin/miniconda3/envs/robust_fill/lib/python3.7/site-packages/torch/include/TH -I/home/drakitin/miniconda3/envs/robust_fill/lib/python3.7/site-packages/torch/include/THC -I/home/drakitin/miniconda3/envs/robust_fill/include/python3.7m -c
+post_cflags = -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=edmonds_cpp -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+ldflags = 
+
+rule compile
+  command = $cxx -MMD -MF $out.d $cflags -c $in -o $out $post_cflags
+  depfile = $out.d
+  deps = gcc
+
+
+
+build /home/drakitin/work/nonmonotonic/code/spanning_trees/sst/listops/chuliu_edmonds/build/temp.linux-x86_64-3.7/chuliu_edmonds.o: compile /home/drakitin/work/nonmonotonic/code/spanning_trees/sst/listops/chuliu_edmonds/chuliu_edmonds.cpp
+
+
+
+
+
