@@ -61,11 +61,11 @@ def parse_data_str(data_str):
     is_nosm = (sm == 'nosm')
     return is_fixed, int(max_depth), int(maxlen), is_nosm, int(numd1)
 
-def get_datadir(depth, maxlen, is_nosm):
+def get_datadir(depth, maxlen, is_nosm, datadirpath):
     dataname = 'd{}_ml{}'.format(depth, maxlen)
     if is_nosm:
         dataname += '_nosm'
-    datadir = os.path.join(DATADIR, dataname)
+    datadir = os.path.join(datadirpath, dataname)
     print(datadir)
     return datadir
 
@@ -85,7 +85,9 @@ def get_nums(is_fixed, max_depth, numd1, sizes):
     numd1s[0] = numd1
     return maxnums.tolist(), numd1s.tolist()
 
-def get_datasets(data_str):
+def get_datasets(data_str, datadirpath=None):
+    if datadirpath is None:
+        datadirpath = DATADIR
     sizes = np.array([80000, 10000, 10000]) # train, val, test
     is_fixed, max_depth, maxlen, is_nosm, numd1 = parse_data_str(data_str)
     tsvs = ['train.tsv', 'valid.tsv', 'test.tsv']
@@ -93,20 +95,20 @@ def get_datasets(data_str):
     depths = [[] for _ in range(len(tsvs))]
     datapaths = [[] for _ in range(len(tsvs))]
     if is_fixed:
-        datadir = get_datadir(max_depth, maxlen, is_nosm)
+        datadir = get_datadir(max_depth, maxlen, is_nosm, datadirpath)
         for i, tsv in enumerate(tsvs):
             datapaths[i].append(os.path.join(datadir, tsv))
             depths[i].append(max_depth)
     else:
         for d in range(1, max_depth):
             depth = d + 1 # start at depth 2
-            datadir = get_datadir(depth, maxlen, is_nosm)
+            datadir = get_datadir(depth, maxlen, is_nosm, datadirpath)
             for i, tsv in enumerate(tsvs):
                 datapaths[i].append(os.path.join(datadir, tsv))
                 depths[i].append(depth)
     # Gather d1 paths
     d1paths = []
-    d1dir = get_datadir(1, maxlen, is_nosm)
+    d1dir = get_datadir(1, maxlen, is_nosm, datadirpath)
     for i, tsv in enumerate(tsvs):
         d1paths.append(os.path.join(d1dir, tsv))
     maxnums, numd1s = get_nums(is_fixed, max_depth, numd1, sizes)
